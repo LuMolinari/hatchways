@@ -1,11 +1,20 @@
-import logo from './logo.svg';
+
+import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
+  //hold students
+  const [students, setStudents] = useState([])
+
+  //fetch from api on page load
+  useEffect(() => {
+    fetch("https://api.hatchways.io/assessment/students").then((res) => res.json()).then((final) => setStudents(final));
+  }, [])
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <img />
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
