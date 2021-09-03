@@ -97,6 +97,7 @@ class Student extends PureComponent {
               Skill: {skill} <br />
               Average: {avg(this.props.student.grades)}%
             </p>
+            {/* Display array of grades depending on showGrades */}
             {this.state.showGrades && (
               <div className="grades">
                 {grades.map((grade, index) => {
@@ -108,10 +109,11 @@ class Student extends PureComponent {
                 })}
               </div>
             )}
+            {/* tags are displayed as they are added to the tags array */}
             <div className="tag-container">
-              {this.state.tags.map((item) => {
+              {this.state.tags.map((item, index) => {
                 return (
-                  <div key={item} className="tag">
+                  <div key={index} className="tag">
                     {item}
                   </div>
                 );
