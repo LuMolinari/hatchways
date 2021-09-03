@@ -8,63 +8,45 @@ class App extends PureComponent {
     this.updateTags = this.updateTags.bind(this);
 
     this.state = {
-      data: [],
       students: [],
       tagFilter: "",
+      nameFilter: "",
     };
   }
 
+  //fetch data from API
   componentDidMount() {
     fetch("https://api.hatchways.io/assessment/students")
       .then((res) => res.json())
       .then((final) => {
-        console.log("Fetching Data");
         this.setState({
           students: final.students,
           data: final.students,
         });
-        console.log("this.state :>> ", this.state);
       })
       .catch((error) => console.log("Error: ", error));
   }
 
+  //filter visible students based on search bar
   updateStudents(event) {
-    let result = [];
-
-    console.log("updating Students");
-    if (this.state.data) {
-      result = this.state.data.filter((student) => {
-        return (
-          student.firstName.toUpperCase() +
-          " " +
-          student.lastName.toUpperCase()
-        ).includes(event.target.value.toUpperCase());
-      });
-
-      console.log("result :>> ", result);
-      this.setState({
-        students: result,
-      });
-    }
+    this.setState({
+      nameFilter: event.target.value,
+    });
   }
 
+  //update tag being sent to filter students
   updateTags(event) {
-    console.log("tagQuery.current.value :>> ", event.target.value);
-    this.setState(
-      {
-        tagFilter: event.target.value,
-      },
-      () => {
-        console.log("Inside Callback");
-      }
-    );
-    console.log("tagFilter", this.state.tagFilter);
+    this.setState({
+      tagFilter: event.target.value,
+    });
   }
 
+  //render main page
   render() {
     return (
       <div className="App">
         <div className="content">
+          {/* Input fields for queries */}
           <input
             type="search"
             className="query"
@@ -77,17 +59,16 @@ class App extends PureComponent {
             placeholder="Search by Tag"
             onChange={this.updateTags}
           />
+          {/*check if students array was recieved, then map the array to Student components  */}
           {this.state.students.length ? (
             this.state.students.map((student) => {
               return (
-                <div key={student.id}>
-                  <Student
-                    student={student}
-                    tagFilter={this.state.tagFilter}
-                  ></Student>
-                  {/* Remove last hr using conditional statement */}
-                  {student.id !== this.state.students.length && <hr />}
-                </div>
+                <Student
+                  key={student.id}
+                  student={student}
+                  tagFilter={this.state.tagFilter}
+                  nameFilter={this.state.nameFilter}
+                ></Student>
               );
             })
           ) : (

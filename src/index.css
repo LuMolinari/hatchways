@@ -41,7 +41,7 @@ code {
 
 .content {
   background: #ffffff;
-  width: 75%;
+  width: 55%;
   height: 75%;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -55,7 +55,7 @@ code {
   justify-content: flex-start;
   align-items: center;
   width: 100%;
-  height: 25%;
+  height: auto;
   padding: 0.5em;
 }
 
@@ -91,6 +91,7 @@ code {
   border-bottom: 1px solid;
   padding: 0.2em 0.5em;
   margin-top: 0.5em;
+  font-size: 1.2em;
 }
 
 .expand-button {
@@ -127,7 +128,7 @@ code {
   background: #dddcdd;
   font-size: 0.7em;
   width: fit-content;
-  padding: 0.3em;
+  padding: 0.4em;
   margin: 0.1em;
   margin-top: 0;
   border-radius: 5%;

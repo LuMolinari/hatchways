@@ -25,13 +25,11 @@ class Student extends PureComponent {
   //add tag to array
   addTag(event) {
     if (event.keyCode === 13) {
-      //console.log("tag.current.value :>> ", tag.current.value);
       this.setState({
         tags: [...this.state.tags, event.target.value],
       });
 
       event.target.value = "";
-      console.log(this.state.tags);
     }
   }
 
@@ -47,7 +45,7 @@ class Student extends PureComponent {
     const skill = this.props.student.skill;
     const grades = this.props.student.grades;
 
-    //logic for conditionally rendering grades
+    //logic for flipping boolean to display grade and change button symbol
     const displayGrades = () => {
       if (this.state.symbol === "+") {
         this.setState({
@@ -64,13 +62,24 @@ class Student extends PureComponent {
       });
     };
 
-    if (
-      this.props.tagFilter === "" ||
-      this.state.tags.some((tag) => {
-        console.log("checking for tag");
-        return tag.includes(this.props.tagFilter);
-      })
-    ) {
+    //checks the current filters in place to display
+    const checkFilters = () => {
+      return (
+        (this.props.tagFilter === "" ||
+          this.state.tags.some((tag) => {
+            return tag.includes(this.props.tagFilter);
+          })) &&
+        (this.props.nameFilter === "" ||
+          (
+            this.props.student.firstName.toUpperCase() +
+            " " +
+            this.props.student.lastName.toUpperCase()
+          ).includes(this.props.nameFilter.toUpperCase()))
+      );
+    };
+
+    //conditionally render components based on filters in parent class
+    if (checkFilters()) {
       return (
         <div className="student">
           <img
@@ -101,8 +110,6 @@ class Student extends PureComponent {
             )}
             <div className="tag-container">
               {this.state.tags.map((item) => {
-                console.log("Adding tags");
-                console.log(item);
                 return (
                   <div key={item} className="tag">
                     {item}
