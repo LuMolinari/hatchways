@@ -1,32 +1,64 @@
-
-import { useState, useEffect } from 'react';
-import './App.css';
+import { useState, useEffect, useRef } from "react";
+import Student from "./Student";
 
 function App() {
   //hold students
-  const [students, setStudents] = useState([])
+  const [data, setData] = useState([]);
+  const [students, setStudents] = useState([]);
+  const query = useRef("");
 
   //fetch from api on page load
   useEffect(() => {
-    fetch("https://api.hatchways.io/assessment/students").then((res) => res.json()).then((final) => setStudents(final));
-  }, [])
+    fetch("https://api.hatchways.io/assessment/students")
+      .then((res) => res.json())
+      .then((final) => {
+        setStudents(final.students);
+        setData(final.students);
+      })
+      .catch((error) => console.log("Error: ", error));
+  }, [1]);
+
+  //filter students based on searchbar
+  const updateStudents = () => {
+    let result = [];
+
+    if (data) {
+      result = data.filter((student) => {
+        return (
+          student.firstName.toUpperCase() +
+          " " +
+          student.lastName.toUpperCase()
+        ).includes(query.current.value.toUpperCase());
+      });
+    }
+
+    setStudents(result);
+  };
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="content">
+        <input
+          ref={query}
+          type="search"
+          className="query"
+          placeholder="Search by Name"
+          onChange={updateStudents}
+        />
+        {students.length ? (
+          students.map((student) => {
+            return (
+              <div>
+                <Student key={student.id} student={student}></Student>
+                {/* Remove last hr using conditional statement */}
+                {student.id != students.length && <hr />}
+              </div>
+            );
+          })
+        ) : (
+          <p>No Students Found</p>
+        )}
+      </div>
     </div>
   );
 }
