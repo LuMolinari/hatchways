@@ -1,66 +1,102 @@
-import { useState, useEffect, useRef } from "react";
+import React, { PureComponent } from "react";
 import Student from "./Student";
 
-function App() {
-  //hold students
-  const [data, setData] = useState([]);
-  const [students, setStudents] = useState([]);
-  const query = useRef("");
+class App extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.updateStudents = this.updateStudents.bind(this);
+    this.updateTags = this.updateTags.bind(this);
 
-  //fetch from api on page load
-  useEffect(() => {
+    this.state = {
+      data: [],
+      students: [],
+      tagFilter: "",
+    };
+  }
+
+  componentDidMount() {
     fetch("https://api.hatchways.io/assessment/students")
       .then((res) => res.json())
       .then((final) => {
-        setStudents(final.students);
-        setData(final.students);
+        console.log("Fetching Data");
+        this.setState({
+          students: final.students,
+          data: final.students,
+        });
+        console.log("this.state :>> ", this.state);
       })
       .catch((error) => console.log("Error: ", error));
-  }, [1]);
+  }
 
-  //filter students based on searchbar
-  const updateStudents = () => {
+  updateStudents(event) {
     let result = [];
 
-    if (data) {
-      result = data.filter((student) => {
+    console.log("updating Students");
+    if (this.state.data) {
+      result = this.state.data.filter((student) => {
         return (
           student.firstName.toUpperCase() +
           " " +
           student.lastName.toUpperCase()
-        ).includes(query.current.value.toUpperCase());
+        ).includes(event.target.value.toUpperCase());
+      });
+
+      console.log("result :>> ", result);
+      this.setState({
+        students: result,
       });
     }
+  }
 
-    setStudents(result);
-  };
+  updateTags(event) {
+    console.log("tagQuery.current.value :>> ", event.target.value);
+    this.setState(
+      {
+        tagFilter: event.target.value,
+      },
+      () => {
+        console.log("Inside Callback");
+      }
+    );
+    console.log("tagFilter", this.state.tagFilter);
+  }
 
-  return (
-    <div className="App">
-      <div className="content">
-        <input
-          ref={query}
-          type="search"
-          className="query"
-          placeholder="Search by Name"
-          onChange={updateStudents}
-        />
-        {students.length ? (
-          students.map((student) => {
-            return (
-              <div>
-                <Student key={student.id} student={student}></Student>
-                {/* Remove last hr using conditional statement */}
-                {student.id != students.length && <hr />}
-              </div>
-            );
-          })
-        ) : (
-          <p>No Students Found</p>
-        )}
+  render() {
+    return (
+      <div className="App">
+        <div className="content">
+          <input
+            type="search"
+            className="query"
+            placeholder="Search by Name"
+            onChange={this.updateStudents}
+          />
+          <input
+            type="search"
+            className="query"
+            placeholder="Search by Tag"
+            onChange={this.updateTags}
+          />
+          {this.state.students.length ? (
+            this.state.students.map((student) => {
+              return (
+                <div key={student.id}>
+                  <Student
+                    student={student}
+                    tagFilter={this.state.tagFilter}
+                  ></Student>
+                  {/* Remove last hr using conditional statement */}
+                  {student.id !== this.state.students.length && <hr />}
+                </div>
+              );
+            })
+          ) : (
+            <p>No Students Found</p>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default App;
